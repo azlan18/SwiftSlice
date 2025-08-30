@@ -1,5 +1,5 @@
 //import supabase client 
-const supabase = require('../config/database')
+const { supabase } = require('../config/database')
 //auth middleware
 const authenticate = async (req, res, next) => {
     try{    
@@ -14,8 +14,8 @@ const authenticate = async (req, res, next) => {
         req.user = user;
         next();
     }catch(error){
-        return res.status(500).json({error: 'Authentication failed'})
+        return res.status(500).json({error: 'Authentication failed', headers: req.headers})
     }
 }
 
-export default {authenticate};
+module.exports = {authenticate};
