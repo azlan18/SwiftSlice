@@ -1,21 +1,25 @@
-//import supabase client 
-const supabase = require('../config/database')
-//auth middleware
-const authenticate = async (req, res, next) => {
-    try{    
-        const token = req.headers.authorization.split(' ')[1];
-        if(!token){
-            return res.status(401).json({error: 'No token provided'})
-        }
-        const {data:{ user }, error } = await supabase.auth.getUser(token);
-        if(error){
-            return res.status(401).json({error: 'Invalid token'})
-        }
-        req.user = user;
-        next();
-    }catch(error){
-        return res.status(500).json({error: 'Authentication failed'})
-    }
-}
+const express = require('express');
+const router = express.Router();
+const supabase = require('../config/database');
+const authenticate = require('../middleware/auth');
 
-export default {authenticate};
+router.post('/signup', authenticate, async (req, res) => {
+    const {email, password} = req.body;
+    if(!email || !password){
+        return res.status(400).json({error: 'Email and password are required'})
+    }
+    const {data, error} = await supabase.auth.signUp({email, password});
+    if(error){
+        return res.status(500).json({error: 'Failed to signup'})
+    } 
+    return res.status(200).json({
+        message: 'Signup successful',
+        user: data.user,
+        session: data.session
+    })
+});
+
+
+
+
+
