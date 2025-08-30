@@ -14,7 +14,7 @@ const authenticate = async (req, res, next) => {
         req.user = user;
         next();
     }catch(error){
-        return res.status(500).json({error: 'Authentication failed', headers: req.headers})
+        return res.status(500).json({error: 'Authentication failed'})
     }
 }
 
